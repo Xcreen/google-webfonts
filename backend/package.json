@@ -1,0 +1,14 @@
+{
+  "name": "google-webfonts-backend",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/app.js",
+  "scripts": {
+
+  },
+  "author": "Xcreen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
