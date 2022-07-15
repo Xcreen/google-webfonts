@@ -1,5 +1,5 @@
-import Dashboard from './components/HelloWorld.vue'
+import Home from './components/Home.vue'
 
 export const routes = [
-  {path: '/', component: Dashboard, name: 'Dashboard'}
+  {path: '/', component: Home, name: 'Home'}
 ]
