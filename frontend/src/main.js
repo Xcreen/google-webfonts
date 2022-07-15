@@ -1,5 +1,14 @@
 import { createApp } from 'vue'
-import './style.css'
+import {createRouter, createWebHistory} from 'vue-router'
+import {routes} from './routes'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+const app = createApp(App)
+app.config.globalProperties.$apiURL = import.meta.env.VITE_API_URL
+app.use(router)
+app.mount('#app')
