@@ -6,16 +6,18 @@
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4 text-center">Easily integrate your favorite google webfonts locally into your website.</p>
         <div class="form-floating w-100 mb-4">
-          <input type="text" class="form-control" id="search-font-input" v-model="inputFontSearch" @keyup="filterFonts" placeholder="Search fonts...">
+          <input type="text" class="form-control" id="search-font-input" placeholder="Search fonts..."
+                 v-model="inputFontSearch" @keyup="filterFonts" autofocus>
           <label for="search-font-input">Search fonts...</label>
         </div>
 
         <span class="lead">Available fonts:</span>
 
         <ul class="list-group mt-2">
-          <a v-for="webfont in displayWebFonts" href="#" class="list-group-item list-group-item-action">
+          <router-link :to="{ name: 'Font', params: { fontFamily: webfont.family.toLocaleLowerCase() }}"
+                       v-for="webfont in displayWebFonts" class="list-group-item list-group-item-action">
             {{ webfont.family }} <small class="text-muted ms-2">{{ webfont.category }}</small>
-          </a>
+          </router-link>
         </ul>
 
       </div>
