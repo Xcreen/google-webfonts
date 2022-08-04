@@ -13,6 +13,14 @@
 
         <span class="lead">Available fonts:</span>
 
+        <div class="text-center" :class="{ 'd-none': !loadingFonts }">
+          <i class="fa-3x fa-solid fa-sync fa-spin"></i>
+        </div>
+
+        <div class="alert alert-danger d-flex align-items-center" :class="{ 'd-none': !errorMessage }" role="alert">
+          <i class="fa-solid fa-triangle-exclamation me-2"></i> <div>{{ errorMessage }}</div>
+        </div>
+
         <ul class="list-group mt-2">
           <router-link :to="{ name: 'Font', params: { fontFamily: webfont.family.toLocaleLowerCase() }}"
                        v-for="webfont in displayWebFonts" class="list-group-item list-group-item-action">
@@ -37,7 +45,9 @@ export default {
       inputFontSearch: '',
       googleWebFonts: [],
       displayWebFonts: [],
-      searchInterval: null
+      searchInterval: null,
+      loadingFonts: true,
+      errorMessage: null
     }
   },
   methods: {
@@ -70,6 +80,7 @@ export default {
           'Content-Type': 'application/json'
         }
       })
+      this.loadingFonts = false
       this.googleWebFonts = googleWebFontResponse.data.items
       this.displayWebFonts = this.googleWebFonts
     }
@@ -78,6 +89,8 @@ export default {
       if (typeof requestException.response !== 'undefined' && typeof requestException.response.status !== 'undefined') {
         extraText = `(${requestException.code} ${requestException.response.status})`
       }
+      this.loadingFonts = false
+      this.errorMessage = 'Failed to request api!'
       console.log(`Failed to request ${this.$apiURL} ${extraText}`)
     }
   }
