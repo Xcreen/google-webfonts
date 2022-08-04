@@ -86,20 +86,20 @@ export default {
     try {
       const googleWebFontResponse = await axios({
         method: 'get',
-        url: this.$apiURL + 'google-webfont-api-data',
+        url: this.$apiURL + 'google-webfont-family',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
+        },
+        params: {
+          'family': this.$route.params.fontFamily.trim()
         }
       })
-      googleWebFontResponse.data.items.forEach(value => {
-        if(value.family.toLowerCase() === this.$route.params.fontFamily.trim().toLowerCase()) {
-          this.googleWebFont = value
-          this.selectedVariants.push('regular')
+      this.googleWebFont = googleWebFontResponse.data.fontBase
+      this.selectedVariants.push('regular')
 
-          console.log(value)
-        }
-      })
+
+      console.log(googleWebFontResponse.data)
     }
     catch (requestException) {
       let extraText = requestException.code
