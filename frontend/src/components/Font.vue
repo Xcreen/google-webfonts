@@ -28,9 +28,19 @@
                    v-model="loadLocalFont" @change="selectVariant">
             <label class="form-check-label" for="load-local-font-checkbox">Load font from system, if it´s available</label>
           </div>
+          <div class="mb-3">
+              <label for="custom-folder-input" class="form-label">Custom folder</label>
+              <input type="text" class="form-control" id="custom-folder-input" v-model="folderPrefix">
+          </div>
           <div class="mb-1">
-              <label for="exampleInputEmail1" class="form-label">Custom folder</label>
-              <input type="text" class="form-control" id="exampleInputEmail1" v-model="folderPrefix">
+            <label for="custom-font-dispay-select" class="form-label">Font-Display Property</label>
+            <select class="form-control" v-model="fontDisplayProperty" id="custom-font-dispay-select">
+              <option value="swap">Swap</option>
+              <option value="auto">Auto</option>
+              <option value="block">Block</option>
+              <option value="fallback">Fallback</option>
+              <option value="optional">Optional</option>
+            </select>
           </div>
         </div>
         <div class="col-sm-8">
@@ -39,16 +49,16 @@
           <div v-for="fontVariant in selectedVariants" class="css-code">
             <pre>
 <code>
-  /* {{ googleWebFont.family }} regular - latin */
-  @font-face {
-    font-family: '{{ googleWebFont.family }}';
-    font-style: normal;
-    font-weight: 400;
-    src: {{ getLocalFontCSS(googleWebFont.family) }}url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff2') format('woff2'),
-         url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff') format('woff');
-  }
-</code>
-            </pre>
+/* {{ googleWebFont.family }} regular - latin */
+@font-face {
+  font-family: '{{ googleWebFont.family }}';
+  font-display: {{ fontDisplayProperty }};
+  font-style: {{ getFontStyleCSS(fontVariant) }};
+  font-weight: {{ getFontWeightCSS(fontVariant) }};
+  src: {{ getLocalFontCSS(googleWebFont.family) }}url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff2') format('woff2'),
+       url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff') format('woff');
+}
+</code></pre>
           </div>
         </div>
       </div>
@@ -68,7 +78,8 @@ export default {
       googleWebFont: {},
       selectedVariants: [],
       loadLocalFont: true,
-      folderPrefix: '../fonts'
+      folderPrefix: '../fonts',
+      fontDisplayProperty: 'swap'
     }
   },
   async mounted() {
@@ -103,7 +114,25 @@ export default {
       console.log(this.selectedVariants)
     },
     getLocalFontCSS(fontFamily) {
-      return this.loadLocalFont ? 'local(\'' +  fontFamily + '\'),\n'     : ''
+      return this.loadLocalFont ? 'local(\'' +  fontFamily + '\'),\n       ': ''
+    },
+    getFontStyleCSS(fontVariant){
+      let fontStyle = 'normal'
+      if(fontVariant.includes('italic')) {
+        fontStyle = 'italic'
+      }
+      if(fontVariant.includes('oblique')) {
+        fontStyle = 'oblique'
+      }
+      return fontStyle
+    },
+    getFontWeightCSS(fontVariant) {
+      if(fontVariant === 'regular' || fontVariant === 'italic') {
+        return 400
+      }
+      else {
+        return fontVariant.replace(/\D+/g, '')
+      }
     }
   },
   computed: {
