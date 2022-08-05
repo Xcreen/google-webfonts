@@ -49,9 +49,10 @@ app.get('/google-webfont-family', async (req, res) => {
   }
 
   //TODO GET FONT LINKS
-  //getFontLinks(baseData.family)
+  const webFontLinks = await getFontLinks(baseData.family)
 
   returnData.fontBase = baseData
+  returnData.webFontLinks = webFontLinks
   returnData.success = true
   res.send(returnData)
 })
@@ -66,26 +67,33 @@ getFontLinks = async (fontFamily) => {
     woff: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0',
     woff2: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
   }
-  const webFontLinks = {}
-  webFontLinks.woff = []
-  webFontLinks.woff2 = []
-
-  let googleFontCSSResponse = null;
-  try {
-    googleFontCSSResponse = await axios({
-      method: 'get',
-      url: 'https://fonts.googleapis.com/css2',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0'
-      },
-      params: {
-        family: fontFamily
-      }
-    })
-  } catch (requestException) {
-    console.log(requestException)
-    return
+  const webFontLinks = {
+    woff: [],
+    woff2: []
   }
 
-  console.log(googleFontCSSResponse.data)
+  for (const [key, value] of Object.entries(userAgents)) {
+    let googleFontCSSResponse = null
+    try {
+      googleFontCSSResponse = await axios({
+        method: 'get',
+        url: 'https://fonts.googleapis.com/css',
+        headers: {
+          'User-Agent': value
+        },
+        params: {
+          family: fontFamily
+        }
+      })
+
+      const fontURLs = googleFontCSSResponse.data.match(/src: url\((.*\.(woff2?))/i);
+      if(fontURLs != null){
+        webFontLinks[key].push(fontURLs[1])
+      }
+
+    } catch (requestException) {
+      console.log(requestException)
+    }
+  }
+  return webFontLinks
 }
