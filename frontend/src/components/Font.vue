@@ -55,19 +55,24 @@
           <div class="col-sm-8">
             <h4>Copy Font-CSS</h4>
 
-            <div v-for="fontVariant in selectedVariants" class="css-code">
-              <pre>
-<code>
-/* {{ googleWebFont.family }} regular - latin */
+            <div class="card">
+              <div class="card-header">
+                <i class="fa-brands fa-css3"></i> CSS-Code
+              </div>
+              <div class="card-body">
+                <div v-for="fontVariant in selectedVariants" class="css-code">
+              <pre><code>/* {{ googleWebFont.family }} {{ getFontStyleCSS(fontVariant) }} {{ getFontWeightCSS(fontVariant) }} */
 @font-face {
   font-family: '{{ googleWebFont.family }}';
   font-display: {{ fontDisplayProperty }};
   font-style: {{ getFontStyleCSS(fontVariant) }};
   font-weight: {{ getFontWeightCSS(fontVariant) }};
-  src: {{ getLocalFontCSS(googleWebFont.family) }}url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff2') format('woff2'),
-       url('{{ folderPrefix }}/abeezee-v22-latin-regular.woff') format('woff');
+  src: {{ getLocalFontCSS(googleWebFont.family) }}url('{{ folderPrefix }}/{{ getFontFileNameCSS(googleWebFont.family, fontVariant) }}.woff2') format('woff2'),
+       url('{{ folderPrefix }}/{{ getFontFileNameCSS(googleWebFont.family, fontVariant) }}.woff') format('woff');
 }
 </code></pre>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -146,6 +151,9 @@ export default {
       else {
         return fontVariant.replace(/\D+/g, '')
       }
+    },
+    getFontFileNameCSS(fontFamily, fontVariant) {
+      return `${fontFamily.toLowerCase()}-${this.googleWebFont.version}-${fontVariant}`
     }
   },
   computed: {
