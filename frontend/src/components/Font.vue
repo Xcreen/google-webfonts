@@ -20,7 +20,7 @@
 
       <div :class="{ 'd-none':loading || errorMessage }">
 
-        <h2 class="display-6 text-center">{{ googleWebFont.family }} <small><i>{{ googleWebFont.category }}</i></small></h2>
+        <h2 class="display-6 text-center mb-3">{{ googleWebFont.family }} <small><i>{{ googleWebFont.category }}</i></small></h2>
 
         <div class="row">
           <div class="col-sm-4">
@@ -115,8 +115,6 @@ export default {
       this.googleWebFont = googleWebFontResponse.data.fontBase
       this.selectedVariants.push('regular')
       this.loading = false
-
-      console.log(googleWebFontResponse.data)
     } catch (requestException) {
       let extraText = requestException.code
       if (typeof requestException.response !== 'undefined' && typeof requestException.response.status !== 'undefined') {
@@ -153,12 +151,11 @@ export default {
       }
     },
     getFontFileNameCSS(fontFamily, fontVariant) {
-      return `${fontFamily.toLowerCase()}-${this.googleWebFont.version}-${fontVariant}`
+      let fontName = fontFamily.toLowerCase().replace(/\s/g, '-')
+      return `${fontName}-${this.googleWebFont.version}-${fontVariant}`
     }
   },
-  computed: {
-
-  }
+  computed: {}
 }
 </script>
 
