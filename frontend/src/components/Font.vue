@@ -41,7 +41,7 @@
                 <label for="custom-folder-input" class="form-label">Custom folder</label>
                 <input type="text" class="form-control" id="custom-folder-input" v-model="folderPrefix">
             </div>
-            <div class="mb-1">
+            <div class="mb-3">
               <label for="custom-font-dispay-select" class="form-label">Font-Display Property</label>
               <select class="form-control" v-model="fontDisplayProperty" id="custom-font-dispay-select">
                 <option value="swap">Swap</option>
@@ -51,6 +51,9 @@
                 <option value="optional">Optional</option>
               </select>
             </div>
+            <button @click="downloadFont" class="btn btn-primary">
+              <i class="fa-solid fa-download"></i> Download Font
+            </button>
           </div>
           <div class="col-sm-8">
             <h4>Copy Font-CSS</h4>
@@ -151,8 +154,17 @@ export default {
       }
     },
     getFontFileNameCSS(fontFamily, fontVariant) {
-      let fontName = fontFamily.toLowerCase().replace(/\s/g, '-')
-      return `${fontName}-${this.googleWebFont.version}-${fontVariant}`
+      return `${this.getBaseFontFileName(fontFamily)}-${this.googleWebFont.version}-${fontVariant}`
+    },
+    getBaseFontFileName(fontFamily) {
+      return fontFamily.toLowerCase().replace(/\s/g, '-')
+    },
+    downloadFont() {
+      let downloadEndpoint = this.$apiURL + 'download/'
+      let downloadFamily = '?family=' + this.getBaseFontFileName(this.googleWebFont.family)
+      let downloadVariants = '&variants=' + this.selectedVariants.join(',')
+      let downloadLink = downloadEndpoint + downloadFamily + downloadVariants
+      window.open(downloadLink, '_blank').focus();
     }
   },
   computed: {}
