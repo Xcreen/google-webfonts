@@ -22,7 +22,7 @@
         </div>
 
         <ul class="list-group mt-2">
-          <router-link :to="{ name: 'Font', params: { fontFamily: webfont.family.toLocaleLowerCase() }}"
+          <router-link :to="{ name: 'Font', params: { fontFamily: webfont.family.toLocaleLowerCase().replace(/\s/g, '-') }}"
                        v-for="webfont in displayWebFonts" class="list-group-item list-group-item-action">
             {{ webfont.family }} <small class="text-muted ms-2">{{ webfont.category }}</small>
           </router-link>

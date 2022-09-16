@@ -38,7 +38,7 @@ app.get('/google-webfont-family', async (req, res) => {
 
   let baseData = null
   googleWebFonts.items.forEach(value => {
-    if(value.family.toLowerCase() === req.query.family.trim().toLowerCase()) {
+    if(value.family.toLowerCase().replace(/\s/g, '-') === req.query.family.trim().toLowerCase().replace(/\s/g, '-')) {
       baseData = value
     }
   })
@@ -48,7 +48,6 @@ app.get('/google-webfont-family', async (req, res) => {
     return
   }
 
-  //TODO GET FONT LINKS
   const webFontLinks = await getFontLinks(baseData.family)
 
   returnData.fontBase = baseData
@@ -60,7 +59,6 @@ app.get('/google-webfont-family', async (req, res) => {
 app.listen(process.env.EXPRESS_PORT, () => {
   console.log(`Starting Express on port: ${process.env.EXPRESS_PORT}`)
 })
-
 
 getFontLinks = async (fontFamily) => {
   const userAgents = {
