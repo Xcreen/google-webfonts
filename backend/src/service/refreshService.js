@@ -6,7 +6,7 @@ const serviceIntervalTimeout = 15 * 60 * 1000
 const googleWebFontAPIUrl = 'https://www.googleapis.com/webfonts/v1/webfonts'
 
 const refreshConfig = async () => {
-  console.log('Refeshing Google Webfonts ...')
+  console.log('Refreshing Google Webfonts ...')
   try {
     //Request Google Webfont-API
     let googleWebFontResponse = null;
