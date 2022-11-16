@@ -51,21 +51,26 @@
                 <option value="optional">Optional</option>
               </select>
             </div>
-            <button @click="downloadFont" class="btn btn-primary">
-              <i class="fa-solid fa-download"></i> Download Font
-            </button>
           </div>
           <div class="col-sm-8">
             <h4>Copy Font-CSS</h4>
 
-            <div class="card">
+            <div class="card mb-3">
               <div class="card-header">
                 <i class="fa-brands fa-css3"></i> CSS-Code
               </div>
               <div class="card-body">
-                <pre class="css-code" v-html="getCSSCode"></pre>
+                <pre class="css-code" v-html="getHighlightedCSSCode"></pre>
               </div>
             </div>
+
+            <button @click="downloadFont" class="btn btn-primary me-2">
+              <i class="fa-solid fa-download"></i> Download Font
+            </button>
+
+            <button @click="copyCSSCode" class="btn btn-primary">
+              <i class="fa-solid fa-copy"></i> Copy CSS-Code
+            </button>
           </div>
         </div>
       </div>
@@ -156,6 +161,13 @@ export default {
       let downloadVariants = '&variants=' + this.selectedVariants.join(',')
       let downloadLink = downloadEndpoint + downloadFamily + downloadVariants
       window.open(downloadLink, '_blank').focus()
+    },
+    copyCSSCode() {
+      navigator.clipboard.writeText(this.getCSSCode).then(function() {
+        console.log('Copied css-code to clipboard');
+      }, function(err) {
+        console.error('Failed to copy css-code to clipboard', err);
+      });
     }
   },
   computed: {
@@ -175,7 +187,10 @@ export default {
 
 `
       })
-      return hljs.highlight(cssCode, {language: 'css'}).value
+      return cssCode
+    },
+    getHighlightedCSSCode() {
+      return hljs.highlight(this.getCSSCode, {language: 'css'}).value
     }
   }
 }
