@@ -28,13 +28,13 @@
             <div v-for="fontVariant in googleWebFont.variants" class="mb-1 form-check">
               <input type="checkbox" class="form-check-input"
                      :id="'font-variant-checkbox-' + fontVariant" :value="fontVariant"
-                     v-model="selectedVariants" @change="selectVariant">
+                     v-model="selectedVariants">
               <label class="form-check-label" :for="'font-variant-checkbox-' + fontVariant">{{ fontVariant }}</label>
             </div>
             <h4>Other</h4>
             <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="load-local-font-checkbox"
-                     v-model="loadLocalFont" @change="selectVariant">
+                     v-model="loadLocalFont">
               <label class="form-check-label" for="load-local-font-checkbox">Load font from system, if it´s available</label>
             </div>
             <div class="mb-3">
@@ -63,18 +63,7 @@
                 <i class="fa-brands fa-css3"></i> CSS-Code
               </div>
               <div class="card-body">
-                <div v-for="fontVariant in selectedVariants" class="css-code">
-              <pre><code>/* {{ googleWebFont.family }} {{ getFontStyleCSS(fontVariant) }} {{ getFontWeightCSS(fontVariant) }} */
-@font-face {
-  font-family: '{{ googleWebFont.family }}';
-  font-display: {{ fontDisplayProperty }};
-  font-style: {{ getFontStyleCSS(fontVariant) }};
-  font-weight: {{ getFontWeightCSS(fontVariant) }};
-  src: {{ getLocalFontCSS(googleWebFont.family) }}url('{{ folderPrefix }}/{{ getFontFileNameCSS(googleWebFont.family, fontVariant) }}.woff2') format('woff2'),
-       url('{{ folderPrefix }}/{{ getFontFileNameCSS(googleWebFont.family, fontVariant) }}.woff') format('woff');
-}
-</code></pre>
-                </div>
+                <pre class="css-code" v-html="getCSSCode"></pre>
               </div>
             </div>
           </div>
@@ -88,6 +77,8 @@
 
 <script>
 import axios from 'axios'
+import hljs from 'highlight.js/lib/core'
+import hljsCSS from 'highlight.js/lib/languages/css'
 
 export default {
   name: 'Font',
@@ -101,6 +92,9 @@ export default {
       loading: true,
       errorMessage: null
     }
+  },
+  beforeMount() {
+    hljs.registerLanguage('css', hljsCSS)
   },
   async mounted() {
     try {
@@ -129,11 +123,8 @@ export default {
     }
   },
   methods: {
-    selectVariant() {
-      console.log(this.selectedVariants)
-    },
     getLocalFontCSS(fontFamily) {
-      return this.loadLocalFont ? 'local(\'' +  fontFamily + '\'),\n       ': ''
+      return this.loadLocalFont ? 'local(\'' +  fontFamily + '\'),': ''
     },
     getFontStyleCSS(fontVariant){
       let fontStyle = 'normal'
@@ -164,10 +155,29 @@ export default {
       let downloadFamily = '?family=' + this.getBaseFontFileName(this.googleWebFont.family)
       let downloadVariants = '&variants=' + this.selectedVariants.join(',')
       let downloadLink = downloadEndpoint + downloadFamily + downloadVariants
-      window.open(downloadLink, '_blank').focus();
+      window.open(downloadLink, '_blank').focus()
     }
   },
-  computed: {}
+  computed: {
+    getCSSCode() {
+      let cssCode = ''
+      this.selectedVariants.forEach((fontVariant) => {
+        cssCode += `/* ${this.googleWebFont.family } ${this.getFontStyleCSS(fontVariant) } ${this.getFontWeightCSS(fontVariant) } */
+@font-face {
+  font-family: '${this.googleWebFont.family }';
+  font-display: ${this.fontDisplayProperty};
+  font-style: ${this.getFontStyleCSS(fontVariant)};
+  font-weight: ${this.getFontWeightCSS(fontVariant)};
+  src: ${this.getLocalFontCSS(this.googleWebFont.family)}
+       url('${ this.folderPrefix }/${ this.getFontFileNameCSS(this.googleWebFont.family, fontVariant) }.woff2') format('woff2'),
+       url('${ this.folderPrefix }/${ this.getFontFileNameCSS(this.googleWebFont.family, fontVariant) }.woff') format('woff');
+}
+
+`
+      })
+      return hljs.highlight(cssCode, {language: 'css'}).value
+    }
+  }
 }
 </script>
 
